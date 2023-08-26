@@ -19,13 +19,13 @@ To run the executable, type "./PowerSpectrum powspec.input", where "powspec.inpu
 The intensity mapping cube should have data arranged with the following header such that it can be read be the following python script:
 
 ```
-import numpy as np\
-f = open ('file1.bin', 'rb')\
-N = np.fromfile (f, count=3, dtype=np.uint64)\
-N1,N2,N3 = N\
-grid_size = np.fromfile (f, count=1, dtype=np.float32)\
-data = np.fromfile (f, count=N1*N2*N3, dtype=np.float32)\
-f.close ()\
+import numpy as np
+f = open ('file1.bin', 'rb')
+N = np.fromfile (f, count=3, dtype=np.uint64)
+N1,N2,N3 = N
+grid_size = np.fromfile (f, count=1, dtype=np.float32)
+data = np.fromfile (f, count=N1*N2*N3, dtype=np.float32)
+f.close ()
 data = data.reshape ((N1,N2,N3), order='C')
 ```
 
