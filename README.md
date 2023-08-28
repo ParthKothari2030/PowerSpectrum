@@ -41,4 +41,4 @@ data = data.reshape ((N1,N2,N3), order='C')
 grid_size should be in Mpc.
 
 ## Acknowledgements
-If you are using this tool, please acknowledge the following reference: (https://ui.adsabs.harvard.edu/abs/2021MNRAS.507.2500M/abstract)[https://ui.adsabs.harvard.edu/abs/2021MNRAS.507.2500M/abstract].
+If you are using this tool, please acknowledge the following reference: [https://ui.adsabs.harvard.edu/abs/2021MNRAS.507.2500M/abstract](https://ui.adsabs.harvard.edu/abs/2021MNRAS.507.2500M/abstract).
