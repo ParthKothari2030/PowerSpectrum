@@ -1,6 +1,15 @@
 # PowerSpectrum
 This tool estimates the power spectrum of a given cube which can contain any cosmological line-intensity mapping signal intensity. It is adapted from the package "N-body" ([https://github.com/rajeshmondal18/N-body](https://github.com/rajeshmondal18/N-body))
 
+## Prerequsites
+This package is dependent on "FFTW" and can be found here: [https://www.fftw.org](https://www.fftw.org). It need to be installed in the following manner:
+```
+./configure --enable-float --enable-threads --enable-openmp
+make
+sudo make install
+```
+"g++" compiler needs to be installed, although any c++ compiler may be used, requiring the makefile to be altered accordingly.
+
 ## How to use
 Inside the directory "PowerSpectrum", type "make" and hit "Enter", which will compile the code and create the executable "PowerSpectrum". You need to have a input file (e.g. "powspec.input") which will contain the number of k-bins to estimate the power spectrum at and the name of the binary files that hold the signal intensity cube.
 The input file format would be as follows:\
@@ -30,3 +39,6 @@ data = data.reshape ((N1,N2,N3), order='C')
 ```
 
 grid_size should be in Mpc.
+
+## Acknowledgements
+If you are using this tool, please acknowledge the following reference: (https://ui.adsabs.harvard.edu/abs/2021MNRAS.507.2500M/abstract)[https://ui.adsabs.harvard.edu/abs/2021MNRAS.507.2500M/abstract].
