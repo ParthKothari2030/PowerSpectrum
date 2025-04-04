@@ -15,7 +15,7 @@ cube (float x)
 };
 
 moments
-cal_pow (val_f &ro_dum, const int N[], const float LL)
+cal_pow_updated (val_f &ro_dum, const int N[], const float LL, float k_min, float k_max)
 {
 
   std::valarray<std::complex<float> > ro_dum_fourier (
@@ -40,8 +40,19 @@ cal_pow (val_f &ro_dum, const int N[], const float LL)
 
   int N_max = std::max ({ N[0], N[1], N[2] });
 
-  float k_min = 1. / N_max, k_max = 1. / 2,
-        R_log = log10 (k_max) - log10 (k_min), logspace_bin_w = R_log / Nbin;
+  float R_log, logspace_bin_w;
+  
+  k_min *= LL / (2 * M_PI); // -> Converting to grid units
+  k_max *= LL / (2 * M_PI);
+  // std::cout<<"LL= "<<LL<<"\t"<<"\n"<<"k_min_grid= "<<k_min<<"\n k_max_grid= "<<k_max;
+  
+  if (k_min <= 1./N_max || k_max >= 1./2){
+    std::cout<<"Invalid k values.\n";
+    exit(1);
+  }   
+
+  R_log = log10 (k_max) - log10 (k_min);
+  logspace_bin_w = R_log / Nbin;
 
   //---------------------- BINNING POWER SPECTRA -------------------//
   float kk, mu, P0, P2, P4;
@@ -56,7 +67,7 @@ cal_pow (val_f &ro_dum, const int N[], const float LL)
 
           kk = sqrt (sqr (1. * i / N[0]) + sqr (1. * j / N[1])
                      + sqr (1. * k / N[2]));
-          if (kk > k_max)
+          if (kk < k_min || kk > k_max)
             continue;
 
           index = k + (N[2] / 2 + 1) * (j + N[1] * i);
@@ -71,15 +82,19 @@ cal_pow (val_f &ro_dum, const int N[], const float LL)
 
           P0 = (double)norm (ro_dum_fourier[index]);
 
-          pw_mom.P0[bin] += P0;
-          pw_mom.P2[bin] += P0 * (double)P2;
-          pw_mom.P4[bin] += P0 * (double)P4;
+          if(bin <= Nbin - 1 )
+          {
+            pw_mom.P0[bin] += P0;
+            pw_mom.P2[bin] += P0 * (double)P2;
+            pw_mom.P4[bin] += P0 * (double)P4;
 
-          pw_mom.k_mode[bin] += (double)kk;
-          pw_mom.no[bin] += 1;
+            pw_mom.k_mode[bin] += (double)kk;
+            // std::cout <<"kmode_halfline= "<< pw_mom.k_mode[bin] << "\n";
+            pw_mom.no[bin] += 1;
 
-          no2[bin] += (double)(P2 * P2);
-          no4[bin] += (double)(P4 * P4);
+            no2[bin] += (double)(P2 * P2);
+            no4[bin] += (double)(P4 * P4);
+          }
         } // end of half-lines
 
   // half-planes
@@ -97,7 +112,7 @@ cal_pow (val_f &ro_dum, const int N[], const float LL)
               c = k;
               kk = sqrt (sqr (1. * a / N[0]) + sqr (1. * b / N[1])
                          + sqr (1. * c / N[2]));
-              if (kk > k_max)
+              if (kk < k_min || kk > k_max)
                 continue;
 
               index = k + (N[2] / 2 + 1) * (j + N[1] * i);
@@ -112,15 +127,20 @@ cal_pow (val_f &ro_dum, const int N[], const float LL)
 
               P0 = (double)norm (ro_dum_fourier[index]);
 
-              pw_mom.P0[bin] += P0;
-              pw_mom.P2[bin] += P0 * (double)P2;
-              pw_mom.P4[bin] += P0 * (double)P4;
+              if(bin <= Nbin-1)
+              {
+                pw_mom.P0[bin] += P0;
+                pw_mom.P2[bin] += P0 * (double)P2;
+                pw_mom.P4[bin] += P0 * (double)P4;
 
-              pw_mom.k_mode[bin] += (double)kk;
-              pw_mom.no[bin] += 1;
+                pw_mom.k_mode[bin] += (double)kk;
+                // std::cout <<"kmode_halfplane= "<< pw_mom.k_mode[bin] << "\n";
+                pw_mom.no[bin] += 1;
+                // std::cout<<"\n number= "<<pw_mom.no[bin]<<"\t";
 
-              no2[bin] += (double)(P2 * P2);
-              no4[bin] += (double)(P4 * P4);
+                no2[bin] += (double)(P2 * P2);
+                no4[bin] += (double)(P4 * P4);
+              }
             }
         }
     } // end of half-planes
@@ -140,7 +160,7 @@ cal_pow (val_f &ro_dum, const int N[], const float LL)
               c = k;
               kk = sqrt (sqr (1. * a / N[0]) + sqr (1. * b / N[1])
                          + sqr (1. * c / N[2]));
-              if (kk > k_max)
+              if (kk < k_min || kk > k_max)
                 continue;
 
               index = k + (N[2] / 2 + 1) * (j + N[1] * i);
@@ -158,15 +178,22 @@ cal_pow (val_f &ro_dum, const int N[], const float LL)
 
               P0 = (double)norm (ro_dum_fourier[index]);
 
-              pw_mom.P0[bin] += P0;
-              pw_mom.P2[bin] += P0 * (double)P2;
-              pw_mom.P4[bin] += P0 * (double)P4;
+              if(bin <= Nbin - 1)
+              {
+                pw_mom.P0[bin] += P0;
+                // std::cout<<"\n P0= "<<pw_mom.P0[bin]<<"\t";
+                // std::cout<<"\n bin = "<<bin<<"\t";
+                pw_mom.P2[bin] += P0 * (double)P2;
+                pw_mom.P4[bin] += P0 * (double)P4;
 
-              pw_mom.k_mode[bin] += (double)kk;
-              pw_mom.no[bin] += 1;
+                pw_mom.k_mode[bin] += (double)kk;
+                // std::cout <<"kmode_halfcube= "<< pw_mom.k_mode[bin] << "\n";
+                pw_mom.no[bin] += 1;
+                // std::cout<<"\n number= "<<pw_mom.no[bin]<<"\t";
 
-              no2[bin] += (double)(P2 * P2);
-              no4[bin] += (double)(P4 * P4);
+                no2[bin] += (double)(P2 * P2);
+                no4[bin] += (double)(P4 * P4);
+              }
             }
         }
     } // end of half-cubes
@@ -188,4 +215,4 @@ cal_pow (val_f &ro_dum, const int N[], const float LL)
     }
 
   return pw_mom;
-} // end of cal_pow()
+} // end of cal_pow_updated()

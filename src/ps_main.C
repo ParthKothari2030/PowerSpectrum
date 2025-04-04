@@ -2,7 +2,7 @@
 #include "pwr_spc.H"
 
 int N1, N2, N3;
-float l;
+float l, k_min, k_max;
 unsigned Nbin;
 
 int
@@ -19,7 +19,7 @@ main (int argc, char *argv[])
       exit (1);
     }
 
-  in >> Nbin;
+  in >> Nbin >> k_min >> k_max;
 
   val_f box;
 
@@ -36,7 +36,7 @@ main (int argc, char *argv[])
       N[1] = N2;
       N[2] = N3;
 
-      pw_mom = cal_pow (box, N, l);
+      pw_mom = cal_pow_updated (box, N, l, k_min, k_max);
       command = "mkdir -p " + outdir;
       size_t bytt = system (command.c_str ());
       pw_mom.write (outdir + '/' + filename + ".powspec");

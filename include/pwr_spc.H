@@ -12,6 +12,6 @@
 
 	using val_f =std::valarray<float>;
 
-	moments cal_pow(val_f&, const int [], const float);
+	moments cal_pow(val_f&, const int [], const float, float, float);
 
 	#endif
