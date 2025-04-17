@@ -14,7 +14,7 @@ sudo make install
 Inside the directory "PowerSpectrum", type "make" and hit "Enter", which will compile the code and create the executable "PowerSpectrum". You need to have a input file (e.g. "powspec.input") which will contain the number of k-bins to estimate the power spectrum at and the name of the binary files that hold the signal intensity cube.
 
 
-**Revised Code version -takes input range of k_min and k_max** 
+### **Revised Code version -takes input range of k_min and k_max** 
 
 
 The input file format would be as follows:\
